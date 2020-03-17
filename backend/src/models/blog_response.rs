@@ -14,12 +14,7 @@ pub struct BlogResponse  {
 impl From<Blog> for BlogResponse {
   fn from(blog: Blog) -> Self {
     let file = std::fs::read_to_string(format!("content/posts/{}", blog.file_path));
-    let content: String;
-
-    match file {
-      Ok(contents) => content = contents,
-      Err(_error) => content = "".to_string(),
-    }
+    let content = file.unwrap_or("".to_string());
 
     BlogResponse {
       id: blog.id,
