@@ -33,7 +33,7 @@ pub async fn get_post(
   info: web::Path<(i32,)>,
   pool: web::Data<Pool>
 ) -> Result<HttpResponse, ServiceError> {
-  let res = web::block(move || qeury(info.0, pool)).await;
+  let res = web::block(move || query(info.0, pool)).await;
 
   match res {
     Ok(post) => {
@@ -60,7 +60,7 @@ fn query_blogs(pool: web::Data<Pool>) -> Result<Vec<BlogSlim>, ServiceError> {
   }
 }
 
-fn qeury(post_id: i32, pool: web::Data<Pool>) -> Result<BlogResponse, ServiceError> {
+fn query(post_id: i32, pool: web::Data<Pool>) -> Result<BlogResponse, ServiceError> {
   use crate::schema::blogs::dsl::{blogs, id};
 
   let conn: &MysqlConnection = &pool.get().unwrap();
