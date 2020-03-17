@@ -59,11 +59,11 @@ async fn main() -> std::io::Result<()> {
               // .route(web::post().to())
               // .route(web::delete().to())
               .route(web::get().to(controllers::blog_controller::get_posts)),
-          ),/*
+          )
           .service(
             web::resource("/posts/{post_id}")
-              .route(web::get().to()),
-          ),*/
+              .route(web::get().to(controllers::blog_controller::get_post)),
+          ),
       )
   });
 
