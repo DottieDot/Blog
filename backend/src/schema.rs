@@ -1,8 +1,20 @@
 table! {
-  users (email) {
+  users {
+      id -> Integer,
       email -> Varchar,
       password_hash -> Varchar,
       created_at -> Timestamp,
+  }
+}
+
+table! {
+  blogs {
+    id -> Integer,
+    user_id -> Integer,
+    title -> Varchar,
+    file_path -> Varchar,
+    created_at -> Timestamp,
+    updated_at -> Timestamp,
   }
 }
 

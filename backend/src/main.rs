@@ -53,13 +53,13 @@ async fn main() -> std::io::Result<()> {
             web::resource("/auth")
               .route(web::post().to(controllers::auth_controller::login))
               .route(web::delete().to(controllers::auth_controller::logout)),
-          ),
-          /*.service(
-            web::resource("/posts")
-              .route(web::post().to())
-              .route(web::delete().to())
-              .route(web::get().to()),
           )
+          .service(
+            web::resource("/posts")
+              // .route(web::post().to())
+              // .route(web::delete().to())
+              .route(web::get().to(controllers::blog_controller::get_posts)),
+          ),/*
           .service(
             web::resource("/posts/{post_id}")
               .route(web::get().to()),

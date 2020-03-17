@@ -3,6 +3,8 @@ use diesel::{Queryable, Insertable};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct UserSlim {
-    pub email: String
+pub struct BlogSlim {
+    pub id: i32,
+    pub title: String,
+    pub created_at: chrono::NaiveDateTime,
 }
