@@ -9,7 +9,9 @@ use crate::models::{
   Pool,
   Blog,
   BlogSlim,
-  BlogResponse
+  BlogResponse,
+  BlogInsertable,
+  UserSlim,
 };
 use crate::errors::ServiceError;
 
@@ -46,6 +48,40 @@ pub async fn get_post(
   }
 }
 
+pub async fn create_post(
+  pool: web::Data<Pool>
+) -> Result<HttpResponse, ServiceError> {
+  let res = web::block(move || create_blog(pool)).await;
+
+  match res {
+    Ok(post) => {
+      Ok(HttpResponse::Ok().json(post))
+    }
+    Err(err) => match err {
+      BlockingError::Error(service_error) => Err(service_error),
+      BlockingError::Canceled => Err(ServiceError::InternalServerError)
+    },
+  }
+}
+
+fn create_blog(pool: web::Data<Pool>) -> Result<BlogSlim, ServiceError> {
+  use crate::schema::blogs::dsl::{blogs, id};
+
+  let conn: &MysqlConnection = &pool.get().unwrap();
+
+  let blog = BlogInsertable::from_details("Test", "Test", UserSlim { id: 1, email: "user@example.com".to_string() });
+  let success = diesel::insert_into(blogs)
+    .values(&blog)
+    .execute(conn);
+
+  match success {
+    Ok(_) => {
+      Ok(blogs.order(id.desc()).first::<Blog>(conn).unwrap().into())
+    },
+    Err(_error) => Err(ServiceError::Conflict),
+  }
+}
+
 fn query_blogs(pool: web::Data<Pool>) -> Result<Vec<BlogSlim>, ServiceError> {
   use crate::schema::blogs::dsl::{blogs};
 
@@ -72,5 +108,5 @@ fn query(post_id: i32, pool: web::Data<Pool>) -> Result<BlogResponse, ServiceErr
   if let Some(post) = items.pop() {
     return Ok(post.into());
   }
-  Err(ServiceError::Unauthorized)
+  Err(ServiceError::NotFound)
 }

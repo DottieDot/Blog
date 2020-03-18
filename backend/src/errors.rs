@@ -9,6 +9,12 @@ pub enum ServiceError {
   #[display(fmt = "Internal Server Error")]
   InternalServerError,
 
+  #[display(fmt = "Conflict")]
+  Conflict,
+
+  #[display(fmt = "Nout Found")]
+  NotFound,
+
   #[display(fmt = "BadRequest: {}", _0)]
   BadRequest(String),
 
@@ -21,6 +27,8 @@ impl ResponseError for ServiceError {
     match self {
       ServiceError::InternalServerError => HttpResponse::InternalServerError()
         .json("Internal Server Error, Please try again later"),
+      ServiceError::NotFound => HttpResponse::NotFound().json("Not Found"),
+      ServiceError::Conflict => HttpResponse::Conflict().json("Conflict"),
       ServiceError::BadRequest(ref message) => HttpResponse::BadRequest().json(message),
       ServiceError::Unauthorized => HttpResponse::Unauthorized().json("Unauthorized")
     }

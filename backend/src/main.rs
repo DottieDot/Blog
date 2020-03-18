@@ -56,7 +56,7 @@ async fn main() -> std::io::Result<()> {
           )
           .service(
             web::resource("/posts")
-              // .route(web::post().to())
+              .route(web::post().to(controllers::blog_controller::create_post))
               // .route(web::delete().to())
               .route(web::get().to(controllers::blog_controller::get_posts)),
           )
