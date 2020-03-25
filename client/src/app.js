@@ -1,18 +1,35 @@
 import React from 'react'
 import {
   CssBaseline, 
-  Typography
+  Typography,
+  ThemeProvider,
+  createMuiTheme
 } from '@material-ui/core'
 import {
   BrowserRouter,
   Switch,
   Route
 } from 'react-router-dom'
+import { useMediaPredicate } from 'react-media-hook'
 import * as Screens from './screens'
 
+const darkTheme = createMuiTheme({
+  palette: {
+    type: 'dark'
+  }
+})
+
+const lightTheme = createMuiTheme({
+  palette: {
+    type: 'light'
+  }
+})
+
 export default () => {
+  const prefersDarkTheme = useMediaPredicate('(prefers-color-scheme: dark)')
+
   return (
-    <React.Fragment>
+    <ThemeProvider theme={prefersDarkTheme ? darkTheme : lightTheme}>
       <CssBaseline />
       <BrowserRouter>
         <Switch>
@@ -27,6 +44,6 @@ export default () => {
           </Route>
         </Switch>
       </BrowserRouter>
-    </React.Fragment>
+    </ThemeProvider>
   )
 }
