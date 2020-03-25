@@ -9,6 +9,9 @@ import {
   Info  as AboutIcon,
   AddBox as NewBlogIcon
 } from '@material-ui/icons'
+import {
+  Link as RouterLink
+} from 'react-router-dom'
 
 export const menuId = "primary-appbar-mobile-menu"
 
@@ -23,19 +26,19 @@ export default ({ anchorEl, onClose }) => {
       open={!!anchorEl}
       onClose={onClose}
     >
-      <MenuItem>
+      <MenuItem component={RouterLink} to="/home">
         <IconButton>
           <HomeIcon />
         </IconButton>
         Home
       </MenuItem>
-      <MenuItem>
+      <MenuItem component={RouterLink} to="/about">
         <IconButton>
           <AboutIcon />
         </IconButton>
         About
       </MenuItem>
-      <MenuItem>
+      <MenuItem component={RouterLink} to="/new-post">
         <IconButton>
           <NewBlogIcon />
         </IconButton>

@@ -1,34 +1,32 @@
 import React from 'react'
 import {
-  AppBar, 
-  Post,
-  Gap
-} from './components'
-import { 
-  Container, 
   CssBaseline, 
-  Typography,
-  Divider
+  Typography
 } from '@material-ui/core'
+import {
+  BrowserRouter,
+  Switch,
+  Route
+} from 'react-router-dom'
+import * as Screens from './screens'
 
 export default () => {
   return (
     <React.Fragment>
       <CssBaseline />
-      <AppBar />
-      <Container fixed >
-        <Gap size="2" />
-        <Typography variant="h4">
-          Recent posts
-        </Typography>
-        <Gap size="1" />
-        <Post 
-          title="Hello There"
-          summary="General Kenobi!"
-          author="Dot."
-          date={new Date()}
-        />
-      </Container>
+      <BrowserRouter>
+        <Switch>
+          <Route path="/home">
+            <Screens.Home />
+          </Route>
+          <Route path="/about">
+            <Screens.About />
+          </Route>
+          <Route path="*">
+            <Typography variant="h4">404 Not found</Typography>
+          </Route>
+        </Switch>
+      </BrowserRouter>
     </React.Fragment>
   )
 }

@@ -16,6 +16,9 @@ import {
   AddBox   as NewBlogIcon,
   MoreVert as MoreIcon
 } from '@material-ui/icons'
+import {
+  Link as RouterLink
+} from 'react-router-dom'
 import RenderMobileMenu, { 
   menuId as mobileMenuId 
 } from './mobile-menu'
@@ -98,10 +101,11 @@ export default () => {
         <Container fixed>
           <Toolbar className={classes.toolbar}>
             <Link 
-              href="#" 
+              to="/home" 
               color="inherit"
               className={classes.title}
               variant="h6"
+              component={RouterLink}
               noWrap
             >
               Blog
@@ -121,10 +125,10 @@ export default () => {
             </div>
             <Grow />
             <DesktopSection>
-              <Button color="inherit">Home</Button>
-              <Button color="inherit">About</Button>
+              <Button color="inherit" component={RouterLink} to="/home">Home</Button>
+              <Button color="inherit" component={RouterLink} to="/about">About</Button>
               <Tooltip title="New Post" aria-label="new post">
-                <IconButton color="inherit">
+                <IconButton color="inherit" component={RouterLink} to="/new-post">
                   <NewBlogIcon />
                 </IconButton>
               </Tooltip>
