@@ -27,6 +27,7 @@ import {
   DesktopSection, 
   Grow 
 } from '..'
+import { NewPost } from '../../dialogs'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -86,6 +87,7 @@ const useStyles = makeStyles(theme => ({
 export default () => {
   const classes = useStyles()
   const [mobileMenuAnchorEl, setMobileMenuAnchorEl] = React.useState(null)
+  const [newBlogOpen, setNewBlogOpen] = React.useState(null)
 
   const handleMobileMenuOpen = ({ currentTarget }) => {
     setMobileMenuAnchorEl(currentTarget)
@@ -128,7 +130,7 @@ export default () => {
               <Button color="inherit" component={RouterLink} to="/home">Home</Button>
               <Button color="inherit" component={RouterLink} to="/about">About</Button>
               <Tooltip title="New Post" aria-label="new post">
-                <IconButton color="inherit" component={RouterLink} to="/new-post">
+                <IconButton color="inherit" onClick={() => setNewBlogOpen(true)}>
                   <NewBlogIcon />
                 </IconButton>
               </Tooltip>
@@ -150,6 +152,13 @@ export default () => {
       <RenderMobileMenu
         anchorEl={mobileMenuAnchorEl}
         onClose={handleMobileMenuClose}
+        onNewBlog={() => {
+          setNewBlogOpen(true)
+        }}
+      />
+      <NewPost
+        open={newBlogOpen}
+        onClose={() => setNewBlogOpen(false)}
       />
     </React.Fragment>
   )

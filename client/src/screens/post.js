@@ -13,9 +13,6 @@ import {
   Breadcrumbs,
   Link
 } from '@material-ui/core'
-import {
-  Link as RouterLink
-} from 'react-router-dom'
 
 const useStyles = makeStyles(theme => ({
   body: {
@@ -40,10 +37,10 @@ export default () => {
         <Gap size="2" />
         <Row>
           <Breadcrumbs separator="::" aria-label="breadcrumb">
-            <Link color="inherit" component={RouterLink} to="/search?tag=school">
+            <Link color="inherit" to="/search?tag=school">
               School
             </Link>
-            <Link color="inherit" component={RouterLink} to="/search?tag=school,media">
+            <Link color="inherit" to="/search?tag=school,media">
               Media
             </Link>
           </Breadcrumbs>

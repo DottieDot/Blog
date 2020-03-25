@@ -15,7 +15,7 @@ import {
 
 export const menuId = "primary-appbar-mobile-menu"
 
-export default ({ anchorEl, onClose }) => {
+export default ({ anchorEl, onClose, onNewBlog }) => {
   return (
     <Menu 
       anchorEl={anchorEl}
@@ -38,7 +38,7 @@ export default ({ anchorEl, onClose }) => {
         </IconButton>
         About
       </MenuItem>
-      <MenuItem component={RouterLink} to="/new-post">
+      <MenuItem onClick={onNewBlog}>
         <IconButton>
           <NewBlogIcon />
         </IconButton>

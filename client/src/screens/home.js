@@ -8,8 +8,13 @@ import {
   Container,
   Typography
 } from '@material-ui/core'
+import {
+  useHistory
+} from 'react-router-dom'
 
 export default () => {
+  const h = useHistory()
+
   return (
     <React.Fragment>
       <AppBar />
@@ -24,6 +29,7 @@ export default () => {
           summary="General Kenobi!"
           author="Dot."
           date={new Date()}
+          onClick={() => { h.push('/posts/1') }}
         />
       </Container>
     </React.Fragment>
