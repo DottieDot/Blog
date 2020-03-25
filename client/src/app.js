@@ -39,6 +39,9 @@ export default () => {
           <Route path="/about">
             <Screens.About />
           </Route>
+          <Route path="/posts/:id">
+            <Screens.Post />
+          </Route>
           <Route path="*">
             <Typography variant="h4">404 Not found</Typography>
           </Route>
