@@ -19,6 +19,11 @@ import {
 import RenderMobileMenu, { 
   menuId as mobileMenuId 
 } from './mobile-menu'
+import { 
+  MobileSection, 
+  DesktopSection, 
+  Grow 
+} from '..'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -72,21 +77,6 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.up('md')]: {
       width: '20ch'
     }
-  },
-  grow: {
-    flexGrow: 1
-  },
-  desktop: {
-    display: 'none',
-    [theme.breakpoints.up('md')]: {
-      display: 'flex',
-    }
-  },
-  mobile: {
-    display: 'flex',
-    [theme.breakpoints.up('md')]: {
-      display: 'none',
-    }
   }
 }))
 
@@ -129,8 +119,8 @@ export default () => {
                 inputProps={{ 'aria-label': 'search' }}
               />
             </div>
-            <div className={classes.grow} />
-            <div className={classes.desktop}>
+            <Grow />
+            <DesktopSection>
               <Button color="inherit">Home</Button>
               <Button color="inherit">About</Button>
               <Tooltip title="New Post" aria-label="new post">
@@ -138,8 +128,8 @@ export default () => {
                   <NewBlogIcon />
                 </IconButton>
               </Tooltip>
-            </div>
-            <div className={classes.mobile}>
+            </DesktopSection>
+            <MobileSection>
               <IconButton
                 aria-label="show more"
                 aria-controls={mobileMenuId}
@@ -149,7 +139,7 @@ export default () => {
               >
                 <MoreIcon />
               </IconButton>
-            </div>
+            </MobileSection>
           </Toolbar>
         </Container>
       </AppBar>
