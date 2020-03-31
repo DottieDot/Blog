@@ -41,7 +41,7 @@ export default ({ onClose, open }) => {
 
   return (
     <div>
-      <Dialog fullScreen  open={open} onClose={onClose} TransitionComponent={Transition}>
+      <Dialog fullScreen  open={!!open} onClose={onClose} TransitionComponent={Transition}>
         <AppBar className={classes.appBar} position="fixed">
           <Container fixed>
             <Toolbar className={classes.toolBar}>
