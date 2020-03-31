@@ -1,7 +1,14 @@
+use std::pin::Pin;
+
 use actix_identity::Identity;
 use actix_web::{
-  error::BlockingError, web,
+  dev::Payload,
+  error::BlockingError,
+  web,
+  Error,
   HttpResponse,
+  HttpRequest,
+  FromRequest,
 };
 use diesel::prelude::*;
 use diesel::MysqlConnection;
@@ -14,11 +21,32 @@ use crate::models::{
 };
 use crate::errors::ServiceError;
 use crate::util::{verify_password};
+use futures::future::Future;
 
 #[derive(Debug, Deserialize)]
 pub struct AuthData {
   pub email: String,
   pub password: String,
+}
+
+pub type LoggedUser = UserSlim;
+
+impl FromRequest for LoggedUser {
+  type Config = ();
+  type Error = Error;
+  type Future = Pin<Box<dyn Future<Output = Result<LoggedUser, Error>>>>;
+
+  fn from_request(req: &HttpRequest, pl: &mut Payload) -> Self::Future {
+    let fut = Identity::from_request(req, pl);
+
+    Box::pin(async move {
+      if let Some(identity) = fut.await?.identity() {
+          let user: LoggedUser = serde_json::from_str(&identity)?;
+          return Ok(user);
+      };
+      Err(ServiceError::Unauthorized.into())
+    })
+  }
 }
 
 pub async fn logout(id: Identity) -> HttpResponse {
@@ -44,6 +72,12 @@ pub async fn login(
       BlockingError::Canceled => Err(ServiceError::InternalServerError)
     },
   }
+}
+
+pub async fn check_login(
+  user: LoggedUser
+) -> HttpResponse {
+  HttpResponse::Ok().json(user)
 }
 
 fn query(auth_data: AuthData, pool: web::Data<Pool>) -> Result<UserSlim, ServiceError> {

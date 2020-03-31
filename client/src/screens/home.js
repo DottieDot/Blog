@@ -1,11 +1,9 @@
 import React from 'react'
 import {
-  AppBar, 
   Post,
   Gap
 } from '../components'
-import { 
-  Container,
+import {
   Typography
 } from '@material-ui/core'
 import {
@@ -17,21 +15,17 @@ export default () => {
 
   return (
     <React.Fragment>
-      <AppBar />
-      <Container fixed>
-        <Gap size="2" />
-        <Typography variant="h4">
-          Recent posts
-        </Typography>
-        <Gap size="1" />
-        <Post 
-          title="Hello There"
-          summary="General Kenobi!"
-          author="Dot."
-          date={new Date()}
-          onClick={() => { h.push('/posts/1') }}
-        />
-      </Container>
+      <Typography variant="h4">
+        Recent posts
+      </Typography>
+      <Gap size="1" />
+      <Post 
+        title="Hello There"
+        summary="General Kenobi!"
+        author="Dot."
+        date={new Date()}
+        onClick={() => { h.push('/posts/1') }}
+      />
     </React.Fragment>
   )
 }

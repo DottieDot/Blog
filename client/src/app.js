@@ -1,7 +1,6 @@
 import React from 'react'
 import {
   CssBaseline, 
-  Typography,
   ThemeProvider,
   createMuiTheme
 } from '@material-ui/core'
@@ -11,7 +10,7 @@ import {
   Route
 } from 'react-router-dom'
 import { useMediaPredicate } from 'react-media-hook'
-import * as Screens from './screens'
+import * as Containers from './page-containers'
 
 const darkTheme = createMuiTheme({
   palette: {
@@ -33,20 +32,11 @@ export default () => {
       <CssBaseline />
       <BrowserRouter>
         <Switch>
-          <Route path="/home">
-            <Screens.Home />
-          </Route>
-          <Route path="/about">
-            <Screens.About />
-          </Route>
-          <Route path="/posts/:id">
-            <Screens.Post />
-          </Route>
-          <Route path="/new-post">
-            
+          <Route path="/auth">
+            <Containers.AuthPage />
           </Route>
           <Route path="*">
-            <Typography variant="h4">404 Not found</Typography>
+            <Containers.RegularPage />
           </Route>
         </Switch>
       </BrowserRouter>
