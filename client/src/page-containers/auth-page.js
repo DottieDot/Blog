@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   Container,
   Paper,
@@ -8,9 +8,10 @@ import {
 import {
   LockOutlined as LockOutlinedIcon
 } from '@material-ui/icons'
-import { Switch, Route } from 'react-router-dom'
+import { Switch, Route, useHistory } from 'react-router-dom'
 import * as Screens from '../screens'
 import { Gap } from '../components'
+import { isLoggedIn } from '../api/auth'
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -26,6 +27,16 @@ const useStyles = makeStyles(theme => ({
 
 export default () => {
   const classes = useStyles()
+  const history = useHistory()
+
+  useEffect(() => {
+    const fn = async () => {
+      if (await isLoggedIn()) {
+        history.replace('/home')
+      }
+    }
+    fn()
+  }, [history])
 
   return (
     <Container component="main" maxWidth="xs">

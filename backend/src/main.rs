@@ -31,8 +31,6 @@ async fn main() -> std::io::Result<()> {
       .expect("Failed to create pool.");
   let domain: String = std::env::var("DOMAIN").unwrap_or_else(|_| "localhost".to_string());
 
-  println!("{}", std::env::var("CLIENT_ORIGIN").expect("CLIENT_ORIGIN"));
-
   let mut listenfd = ListenFd::from_env();
   let mut server = HttpServer::new(move || {
     App::new()
@@ -40,6 +38,7 @@ async fn main() -> std::io::Result<()> {
     .wrap(
       Cors::new()
         .allowed_origin(std::env::var("CLIENT_ORIGIN").expect("CLIENT_ORIGIN").as_str())
+        .supports_credentials()
         .finish(),
     )
     .wrap(middleware::Logger::default())
@@ -51,6 +50,7 @@ async fn main() -> std::io::Result<()> {
         .max_age_time(chrono::Duration::days(1))
         .secure(false),
     ))
+    .data(web::JsonConfig::default().limit(4096))
     .service(
       web::resource("index.html")
         .route(web::get()).to(|| { HttpResponse::Ok().finish() }),
