@@ -1,31 +1,50 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Post,
   Gap
 } from '../components'
 import {
-  Typography
+  Typography, 
+  LinearProgress,
+  Container
 } from '@material-ui/core'
 import {
   useHistory
 } from 'react-router-dom'
+import { getPosts } from '../api/posts'
 
 export default () => {
+  const [loading, setLoading] = useState(true)
+  const [posts, setPosts] = useState([])
   const h = useHistory()
+
+  useEffect(() => {
+    const fn = async () => {
+      setPosts(await getPosts())
+      setLoading(false)
+    }
+    fn()
+  }, [])
 
   return (
     <React.Fragment>
-      <Typography variant="h4">
-        Recent posts
-      </Typography>
-      <Gap size="1" />
-      <Post 
-        title="Hello There"
-        summary="General Kenobi!"
-        author="Dot."
-        date={new Date()}
-        onClick={() => { h.push('/posts/1') }}
-      />
+      { loading && <LinearProgress color="secondary" /> }
+      <Gap size="2" />
+      <Container fixed>
+        <Typography variant="h4">
+          Recent posts
+        </Typography>
+        <Gap size="1" />
+        {posts.map(({ id, title, summary, created_at }) => (
+          <Post
+            title={title}
+            summary={summary}
+            author="Dot."
+            date={new Date(created_at)}
+            onClick={() => { h.push(`/posts/${id}`) }}
+          />
+        ))}
+      </Container>
     </React.Fragment>
   )
 }

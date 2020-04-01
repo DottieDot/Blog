@@ -1,16 +1,21 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Gap,
   Row,
-  Grow
+  Grow,
+  SkeletonWrapper
 } from '../components'
 import {
   Typography,
   makeStyles,
   Paper,
   Breadcrumbs,
-  Link
+  Link,
+  Container,
+  LinearProgress
 } from '@material-ui/core'
+import { getPost } from '../api/posts'
+import { useParams } from 'react-router-dom'
 
 const useStyles = makeStyles(theme => ({
   body: {
@@ -19,39 +24,67 @@ const useStyles = makeStyles(theme => ({
 }))
 
 export default () => {
+  const [loading, setLoading] = useState(true)
+  const [post, setPost] = useState(null)
+  const params = useParams()
   const classes = useStyles()
+
+  useEffect(() => {
+    const fn = async () => {
+      setTimeout(async () => {
+      setPost(await getPost(params.id))
+      setLoading(false)
+      }, 1000)
+    }
+    fn()
+  }, [])
+
+  const tags = post ? post.tags.split(',') : [ 'tag', 'tag' ]
 
   return (
     <React.Fragment>
-      <Typography variant="h4">
-        Hello There
-      </Typography>
-      <Typography variant="subtitle1" color="textSecondary">
-        General kenobi
-      </Typography>
+      { loading && <LinearProgress color="secondary" /> }
       <Gap size="2" />
-      <Row>
-        <Breadcrumbs separator="::" aria-label="breadcrumb">
-          <Link color="inherit" to="/search?tag=school">
-            School
-          </Link>
-          <Link color="inherit" to="/search?tag=school,media">
-            Media
-          </Link>
-        </Breadcrumbs>
-        <Grow />
-        <Typography color="textSecondary">
-          {new Date().toLocaleDateString()}
-        </Typography>
-      </Row>
-      <Gap size="1" />
-      <Paper className={classes.body}>
-        <Typography variant="body">
-          <p>Sint nostrud cupidatat sint voluptate sint minim. Excepteur irure nostrud fugiat incididunt aliqua commodo. Laboris voluptate est excepteur amet laborum tempor aute in eu deserunt velit officia ut voluptate. Officia laboris eu velit amet sunt voluptate deserunt. Officia enim qui proident eu.</p>
-          <p>Exercitation do deserunt commodo irure nostrud officia officia amet laboris. Elit labore velit Lorem dolor anim irure veniam. Consequat commodo reprehenderit excepteur nostrud sunt dolor nulla. Duis labore duis ut commodo enim ipsum magna culpa. Qui Lorem occaecat ad eu est ea ipsum anim ullamco. Occaecat qui tempor est cillum elit sit est tempor ad labore ad. Laboris sint et pariatur magna culpa pariatur non duis ad veniam et amet.</p>
-          <p>Voluptate dolore adipisicing ad pariatur ad. Veniam eu esse minim aliqua enim dolore qui in irure esse veniam dolor. Enim elit incididunt amet in ipsum laboris ipsum incididunt id proident. Irure duis ullamco Lorem incididunt occaecat cillum. Et sint ullamco officia dolor veniam laborum aute do amet irure duis adipisicing irure. Exercitation excepteur sint labore id duis consequat velit amet nostrud cupidatat. Laborum officia irure laboris ullamco ipsum dolor minim magna nostrud irure id pariatur quis.</p>
-        </Typography>
-      </Paper>
+      <Container fixed>
+        <SkeletonWrapper loading={loading}>
+          <Typography variant="h4">
+            { (post ? post.title : 'Title') }
+          </Typography>
+        </SkeletonWrapper>
+        <SkeletonWrapper loading={loading}>
+          <Typography variant="subtitle1" color="textSecondary">
+            { (post ? post.summary : 'Summary') }
+          </Typography>
+        </SkeletonWrapper>
+        <Gap size="2" />
+        <Row>
+          <SkeletonWrapper loading={loading}>
+            <Breadcrumbs separator="::" aria-label="breadcrumb">
+              {tags.map(tag => (
+                <Link color="inherit">
+                  {tag.trim()}
+                </Link>
+              ))}
+            </Breadcrumbs>
+          </SkeletonWrapper>
+          <Grow />
+          <SkeletonWrapper loading={loading}>
+            <Typography color="textSecondary">
+              {new Date(post && post.created_at).toLocaleDateString()}
+            </Typography>
+          </SkeletonWrapper>
+        </Row>
+        <Gap size="1" />
+        <Paper className={classes.body}>
+          <SkeletonWrapper loading={loading}>
+            <Typography variant="body">
+              <pre>
+                {post && post.content}
+              </pre>
+            </Typography>
+          </SkeletonWrapper>
+        </Paper>
+      </Container>
     </React.Fragment>
   )
 }

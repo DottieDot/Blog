@@ -4,5 +4,6 @@ use serde::{Deserialize, Serialize};
 pub struct BlogSlim {
     pub id: i32,
     pub title: String,
+    pub summary: String,
     pub created_at: chrono::NaiveDateTime,
 }

@@ -12,6 +12,8 @@ table! {
     id -> Integer,
     user_id -> Integer,
     title -> Varchar,
+    summary -> Varchar,
+    tags -> Varchar,
     file_path -> Varchar,
     created_at -> Timestamp,
     updated_at -> Timestamp,

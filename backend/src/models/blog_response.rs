@@ -6,7 +6,9 @@ use super::Blog;
 pub struct BlogResponse  {
   pub id: i32,
   pub title: String,
+  pub summary: String,
   pub content: String,
+  pub tags: String,
   pub created_at: chrono::NaiveDateTime,
   pub updated_at: chrono::NaiveDateTime,
 }
@@ -19,7 +21,9 @@ impl From<Blog> for BlogResponse {
     BlogResponse {
       id: blog.id,
       title: blog.title,
+      summary: blog.summary,
       content: content,
+      tags: blog.tags,
       created_at: blog.created_at,
       updated_at: blog.updated_at,
     }
