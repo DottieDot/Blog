@@ -14,6 +14,7 @@ import {
   Container,
   LinearProgress
 } from '@material-ui/core'
+import ReactMarkdown from 'react-markdown'
 import { getPost } from '../api/posts'
 import { useParams } from 'react-router-dom'
 
@@ -31,13 +32,11 @@ export default () => {
 
   useEffect(() => {
     const fn = async () => {
-      setTimeout(async () => {
       setPost(await getPost(params.id))
       setLoading(false)
-      }, 1000)
     }
     fn()
-  }, [])
+  }, [params])
 
   const tags = post ? post.tags.split(',') : [ 'tag', 'tag' ]
 
@@ -77,10 +76,8 @@ export default () => {
         <Gap size="1" />
         <Paper className={classes.body}>
           <SkeletonWrapper loading={loading}>
-            <Typography variant="body">
-              <pre>
-                {post && post.content}
-              </pre>
+            <Typography variant="body1">
+              {post && <ReactMarkdown source={post.content} />}
             </Typography>
           </SkeletonWrapper>
         </Paper>

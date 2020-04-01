@@ -9,6 +9,7 @@ import {
   Switch,
   Route
 } from 'react-router-dom'
+import { SnackbarProvider } from 'notistack'
 import { useMediaPredicate } from 'react-media-hook'
 import * as Containers from './page-containers'
 
@@ -29,17 +30,19 @@ export default () => {
 
   return (
     <ThemeProvider theme={prefersDarkTheme ? darkTheme : lightTheme}>
-      <CssBaseline />
-      <BrowserRouter>
-        <Switch>
-          <Route path="/auth">
-            <Containers.AuthPage />
-          </Route>
-          <Route path="*">
-            <Containers.RegularPage />
-          </Route>
-        </Switch>
-      </BrowserRouter>
+      <SnackbarProvider maxSnack={3}>
+        <CssBaseline />
+        <BrowserRouter>
+          <Switch>
+            <Route path="/auth">
+              <Containers.AuthPage />
+            </Route>
+            <Route path="*">
+              <Containers.RegularPage />
+            </Route>
+          </Switch>
+        </BrowserRouter>
+      </SnackbarProvider>
     </ThemeProvider>
   )
 }

@@ -1,5 +1,6 @@
 #[macro_use]
 extern crate diesel;
+extern crate rand;
 
 use actix_web::{web, App, HttpServer, middleware, HttpResponse};
 use listenfd::ListenFd;

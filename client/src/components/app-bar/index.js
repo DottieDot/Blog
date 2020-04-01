@@ -1,20 +1,19 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   AppBar, 
   Toolbar,
   makeStyles,
   Button,
   Container,
-  InputBase,
-  fade,
   IconButton,
   Tooltip,
   Link
 } from '@material-ui/core'
 import {
-  Search   as SearchIcon,
-  AddBox   as NewBlogIcon,
-  MoreVert as MoreIcon
+  AddBox    as NewBlogIcon,
+  MoreVert  as MoreIcon,
+  ExitToApp as LogoutIcon,
+  VpnKey    as LoginIcon
 } from '@material-ui/icons'
 import {
   Link as RouterLink
@@ -28,6 +27,7 @@ import {
   Grow 
 } from '..'
 import { NewPost } from '../../dialogs'
+import { isLoggedIn, logout } from '../../api/auth'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -49,6 +49,14 @@ export default () => {
   const classes = useStyles()
   const [mobileMenuAnchorEl, setMobileMenuAnchorEl] = React.useState(null)
   const [newBlogOpen, setNewBlogOpen] = React.useState(null)
+  const [loggedIn, setLoggedIn] = React.useState(false)
+
+  useEffect(() => {
+    const fn = async() => {
+      setLoggedIn(await isLoggedIn())
+    }
+    fn()
+  }, [])
 
   const handleMobileMenuOpen = ({ currentTarget }) => {
     setMobileMenuAnchorEl(currentTarget)
@@ -56,6 +64,11 @@ export default () => {
 
   const handleMobileMenuClose = () => {
     setMobileMenuAnchorEl(null)
+  }
+
+  const handleLogout = async () => {
+    await logout()
+    window.location.reload()
   }
 
   return (
@@ -77,11 +90,6 @@ export default () => {
             <DesktopSection>
               <Button color="inherit" component={RouterLink} to="/home">Home</Button>
               <Button color="inherit" component={RouterLink} to="/about">About</Button>
-              <Tooltip title="New Post" aria-label="new post">
-                <IconButton color="inherit" onClick={() => setNewBlogOpen(true)}>
-                  <NewBlogIcon />
-                </IconButton>
-              </Tooltip>
             </DesktopSection>
             <MobileSection>
               <IconButton
@@ -94,6 +102,30 @@ export default () => {
                 <MoreIcon />
               </IconButton>
             </MobileSection>
+            {loggedIn ? (
+              <React.Fragment>
+                <Tooltip title="New Post" aria-label="new post">
+                  <IconButton color="inherit" onClick={() => setNewBlogOpen(true)}>
+                    <NewBlogIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Logout" aria-label="logout">
+                  <IconButton color="inherit" onClick={handleLogout}>
+                    <LogoutIcon />
+                  </IconButton>
+                </Tooltip>
+              </React.Fragment>
+            ) : (
+              <Tooltip title="Sign In" aria-label="sign in">
+                <IconButton 
+                  color="inherit" 
+                  component={RouterLink} 
+                  to="/auth/login"
+                >
+                  <LoginIcon />
+                </IconButton>
+              </Tooltip>
+            )}
           </Toolbar>
         </Container>
       </AppBar>

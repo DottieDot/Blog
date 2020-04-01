@@ -4,6 +4,10 @@ use actix_web::{
 };
 use diesel::prelude::*;
 use diesel::MysqlConnection;
+use serde::Deserialize;
+use std::fs::File;
+use std::io::{Write, BufReader, BufRead, Error};
+use rand::Rng;
 
 use crate::models::{
   Pool,
@@ -14,6 +18,9 @@ use crate::models::{
   UserSlim,
 };
 use crate::errors::ServiceError;
+use super::auth_controller::{
+  LoggedUser
+};
 
 pub async fn get_posts(
   pool: web::Data<Pool>
@@ -48,10 +55,38 @@ pub async fn get_post(
   }
 }
 
+#[derive(Debug, Deserialize)]
+pub struct BlogRequest {
+  pub title: String,
+  pub tags: String,
+  pub summary: String,
+  pub content: String
+}
+
+fn save_content(content: String) -> Result<String, std::io::Error> {
+  let mut file_name = rand::thread_rng()
+    .gen_ascii_chars()
+    .take(10)
+    .collect::<String>();
+
+  file_name.push_str(".md");
+
+  let mut file = File::create(format!("content/posts/{}", file_name.clone()))?;
+  write!(file, "{}", content)?;
+
+  Ok(file_name)
+}
+
 pub async fn create_post(
+  data: web::Json<BlogRequest>,
+  user: LoggedUser,
   pool: web::Data<Pool>
 ) -> Result<HttpResponse, ServiceError> {
-  let res = web::block(move || create_blog(pool)).await;
+  let file = save_content(data.content.clone())?;
+
+  let blog = BlogInsertable::from_details(data.title.clone(), data.summary.clone(), data.tags.clone(), file, user);
+
+  let res = web::block(move || create_blog(blog, pool)).await;
 
   match res {
     Ok(post) => {
@@ -64,14 +99,16 @@ pub async fn create_post(
   }
 }
 
-fn create_blog(pool: web::Data<Pool>) -> Result<BlogSlim, ServiceError> {
+fn create_blog(
+  details: BlogInsertable,
+  pool: web::Data<Pool>
+) -> Result<BlogSlim, ServiceError> {
   use crate::schema::blogs::dsl::{blogs, id};
 
   let conn: &MysqlConnection = &pool.get().unwrap();
 
-  let blog = BlogInsertable::from_details("Test", "Test", UserSlim { id: 1, email: "user@example.com".to_string() });
   let success = diesel::insert_into(blogs)
-    .values(&blog)
+    .values(&details)
     .execute(conn);
 
   match success {

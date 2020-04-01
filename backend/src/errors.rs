@@ -55,3 +55,9 @@ impl From<DBError> for ServiceError {
     }
   }
 }
+
+impl From<std::io::Error> for ServiceError { 
+  fn from(error: std::io::Error) -> ServiceError {
+    ServiceError::InternalServerError
+  }
+}

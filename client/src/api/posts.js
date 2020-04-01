@@ -17,11 +17,23 @@ export const getPost = async (id) => {
     const response = await request(`/api/v1/posts/${id}`, 'get')
     const body = await response.json()
 
-    console.log(body)
-
     return body
   }
   catch {
     return []
+  }
+}
+
+export const savePost = async (title, summary, tags, content) => {
+  try {
+    const response = await request(`/api/v1/posts`, 'post', {
+      title, summary, tags, content
+    })
+    const body = await response.json()
+
+    return body.id
+  }
+  catch {
+    return null
   }
 }

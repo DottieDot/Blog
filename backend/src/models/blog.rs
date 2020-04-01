@@ -22,15 +22,20 @@ pub struct Blog {
 pub struct BlogInsertable {
   pub user_id: i32,
   pub title: String,
+  pub summary: String,
+  pub tags: String,
   pub file_path: String,
 }
 
 impl BlogInsertable {
-  pub fn from_details<S: Into<String>>(title: S, content: S, user: UserSlim) -> Self {
+  pub fn from_details<S: Into<String>>(title: S, summary: S, tags: S, file: S, user: UserSlim) -> Self {
+
     BlogInsertable {
       user_id: user.id,
       title: title.into(),
-      file_path: content.into(),
+      summary: summary.into(),
+      tags: tags.into(),
+      file_path: file.into(),
     }
   }
 }

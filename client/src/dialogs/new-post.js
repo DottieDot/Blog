@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { 
   Dialog, 
   Toolbar,
@@ -8,15 +8,20 @@ import {
   Container,
   Slide,
   makeStyles,
-  Button
+  Button,
+  TextField,
+  Grid,
+  LinearProgress
 } from '@material-ui/core'
 import {
   Close as CloseIcon
 } from '@material-ui/icons'
 import { 
-  MarkdownEditor, 
   Gap 
 } from '../components'
+import { useHistory } from 'react-router-dom'
+import { useSnackbar } from 'notistack'
+import { savePost } from '../api/posts'
 
 const useStyles = makeStyles(theme => ({
   appBar: {
@@ -38,9 +43,53 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default ({ onClose, open }) => {
   const classes = useStyles()
+  const [title, setTitle] = useState('')
+  const [tags, setTags] = useState('')
+  const [summary, setSummary] = useState('')
+  const [content, setContent] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const { enqueueSnackbar } = useSnackbar()
+  const history = useHistory()
+
+  const handleTitleChange = (e) => {
+    setTitle(e.target.value)
+  }
+
+  const handleTagsChange = (e) => {
+    setTags(e.target.value)
+  }
+
+  const handleSummaryChange = (e) => {
+    setSummary(e.target.value)
+  }
+
+  const handleContentChange = (e) => {
+    setContent(e.target.value)
+  }
+
+  const onSubmit = async (e) => {
+    e.preventDefault()
+
+    setSubmitting(true)
+
+    const postId = await savePost(title, summary, tags, content)
+    if (postId === null) {
+      enqueueSnackbar('Something went wrong, please try again', { variant: 'error' })
+      setSubmitting(false)
+    }
+    else {
+      history.push(`/posts/${postId}`)
+      setTitle('')
+      setSummary('')
+      setTags('')
+      setContent('')
+      setSubmitting(false)
+      onClose()
+    }
+  }
 
   return (
-    <div>
+    <form onSubmit={onSubmit} noValidate method="post">
       <Dialog fullScreen  open={!!open} onClose={onClose} TransitionComponent={Transition}>
         <AppBar className={classes.appBar} position="fixed">
           <Container fixed>
@@ -50,25 +99,72 @@ export default ({ onClose, open }) => {
                 color="inherit" 
                 onClick={onClose} 
                 aria-label="close"
+                disabled={submitting}
               >
                 <CloseIcon />
               </IconButton>
               <Typography variant="h6" className={classes.title}>
                 New Post
               </Typography>
-              <Button color="inherit" onClick={onClose}>
+              <Button 
+                type="submit"
+                onClick={onSubmit}
+                color="inherit"
+                disabled={submitting}
+              >
                 Save
               </Button>
             </Toolbar>
           </Container>
         </AppBar>
+        {submitting && <LinearProgress color="secondary" />}
         <Gap size="2" />
         <Container fixed>
-          <Typography variant="body1">
-            <MarkdownEditor />
-          </Typography>
+          <Grid container spacing={3}>
+            <Grid item sm={6} xs={12}>
+              <TextField
+                label="Title"
+                value={title}
+                onChange={handleTitleChange}
+                disabled={submitting}
+                fullWidth
+                required
+              />
+            </Grid>
+            <Grid item sm={6} xs={12}>
+              <TextField
+                label="Tags"
+                value={tags}
+                onChange={handleTagsChange}
+                disabled={submitting}
+                fullWidth
+                required
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Summary"
+                value={summary}
+                onChange={handleSummaryChange}
+                disabled={submitting}
+                fullWidth
+                required
+              />
+            </Grid>
+          </Grid>
+          <Gap size="4" />
+          <TextField
+            label="Content"
+            variant="filled"
+            value={content}
+            onChange={handleContentChange}
+            disabled={submitting}
+            multiline
+            fullWidth
+            required
+          />
         </Container>
       </Dialog>
-    </div>
+    </form>
   )
 }

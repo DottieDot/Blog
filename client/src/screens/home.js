@@ -37,6 +37,7 @@ export default () => {
         <Gap size="1" />
         {posts.map(({ id, title, summary, created_at }) => (
           <Post
+            key={id}
             title={title}
             summary={summary}
             author="Dot."
